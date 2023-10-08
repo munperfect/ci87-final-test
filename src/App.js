@@ -1,25 +1,77 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
-function App() {
+import All from "./pages/All";
+import Active from "./pages/Active";
+import Completed from "./pages/Completed";
+import Navigation from "./pages/components/Navigation";
+
+export default function App() {
+  const [todos, setTodos] = useState([
+    { id: 1, todo: "🧑‍💻 Do coding challenges", isCompleted: false },
+    { id: 2, todo: "💻 Complete CI final exam", isCompleted: false },
+    { id: 3, todo: "💽 Learn more React", isCompleted: false },
+  ]);
+
+  function handleAddTodo(todo) {
+    setTodos((todos) => [...todos, todo]);
+  }
+
+  function handleComplete(id) {
+    setTodos((todos) =>
+      todos.map((item) =>
+        item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+      )
+    );
+  }
+
+  function handleDelete(id) {
+    setTodos((todos) => todos.filter((item) => item.id !== id));
+  }
+
+  function handleDeleteAll() {
+    setTodos([]);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>#todo</h1>
+      <Navigation />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <All
+              todos={todos}
+              onAddTodo={handleAddTodo}
+              onComplete={handleComplete}
+              onDelete={handleDelete}
+            />
+          }
+        />
+        <Route
+          path="/active"
+          element={
+            <Active
+              todos={todos}
+              onAddTodo={handleAddTodo}
+              onComplete={handleComplete}
+            />
+          }
+        />
+        <Route
+          path="/completed"
+          element={
+            <Completed
+              todos={todos}
+              onAddTodo={handleAddTodo}
+              onComplete={handleComplete}
+              onDelete={handleDelete}
+              onDeleteAll={handleDeleteAll}
+            />
+          }
+        />
+      </Routes>
     </div>
   );
 }
-
-export default App;
